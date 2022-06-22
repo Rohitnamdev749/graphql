@@ -1,0 +1,188 @@
+---------------------------------------------
+
+
+query getAllClient{
+  users{
+    id
+    firstName
+  }
+}
+
+--------------------------------------------
+
+query getAllquotes{
+  quotes{
+    name
+    by
+  }
+}
+
+--------------------------------------------
+
+query getAllClientandRelatedQuotes{
+  users{
+    id
+    firstName
+    quotes{
+      name
+      by
+    }
+  }
+}
+-------------------------------
+
+query getUserById{
+  user(id:"1"){
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+
+--------------------------------------
+
+query getQuoteByUser{
+  userquote(by : "1"){
+    name
+    by
+  }
+}
+--------------------
+using query variable
+
+query getQuoteByUser($userId : ID!){
+  userquote(by : $userId){
+    name
+    by
+  }
+}
+
+query variable
+{
+  "userId": "12"
+}
+
+------------------------------
+
+mutation
+
+mutation{
+  signupUserDummy(firstName:"mukesh",lastName:"sharma",email:"mukesh@gmail.com",password:"1234567"){
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+---------------------------
+using query variable mutation
+
+mutation createUser($userNew : userInput!){
+  signupUserDummy(userNew : $userNew){
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+query variable
+{
+  "userNew": {
+    "firstName":"mukesh12",
+    "lastName":"sharma",
+    "email":"mukesh12@gmail.com",
+    "password":"12345609"
+  }
+}
+
+// alias  of signupUserDummy
+mutation createUser($userNew : userInput!){
+  user:signupUserDummy(userNew : $userNew){
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+-----------------------------------------
+signin user mutation
+mutation signinUser($userSignin : UserSigninInput!){
+  user:signinUser(userSignin :$userSignin){
+    token
+  }
+}
+
+query variable
+{
+  "userSignin":{
+    "email":"rohit@gmail.com",
+    "password":"12345"
+  }
+}
+
+
+
+mongodb+srv://Rohit:<password>@cluster0.vdhlj.mongodb.net/graphqldb?retryWrites=true&w=majority
+
+
+
+------------------------------------------
+using without apollo client we fetch data using fetch  from client side 
+
+useEffect(() => {
+        fetch("http://localhost:4000/", {
+            method: 'post',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                query: `
+                query getAllquotes{
+                    quotes{
+                      name
+                      by{
+                        _id
+                        firstName
+                      }
+                    }
+                  }
+                `
+            })
+        }).then(res=>res.json()).then(data=>console.log("data here",data)).catch((err)=>{
+            console.log("err",err)
+        })
+    }, [])
+
+
+---------------------------------------------
+using without apollo client we fetch data using fetch  from client side  and using variables
+useEffect(() => {
+        fetch("http://localhost:4000/", {
+            method: 'post',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                query: `
+                query getUserById($userid : ID!){
+                    user(_id:$userid){
+                      _id
+                      firstName
+                      lastName
+                      email
+                    }
+                  }
+                `,
+                variables:{
+                    userid:"62b070b4fb1c447d24318358"
+                }
+            })
+        }).then(res=>res.json()).then(data=>console.log("data here",data)).catch((err)=>{
+            console.log("err",err)
+        })
+    }, [])
